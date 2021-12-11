@@ -6,6 +6,9 @@ using std::endl;
 
 class Fraction;
 Fraction operator*(Fraction left, Fraction right);	//Объявляем функцию
+Fraction operator/(Fraction left, Fraction right);	//Объявляем функцию
+Fraction operator+(Fraction left, Fraction right);	//Объявляем функцию
+Fraction operator-(Fraction left, Fraction right);	//Объявляем функцию
 
 class Fraction
 {
@@ -79,12 +82,55 @@ public:
 		//A = A * B
 	}
 
+	Fraction& operator/=(const Fraction& other)
+	{
+		return *this = *this / other;
+	}
+	Fraction& operator+=(Fraction& other)
+	{
+		return *this = *this + other;
+	}
+	Fraction& operator-=(Fraction& other)
+	{
+		return *this = *this - other;
+	}
+	bool operator==(Fraction& other)
+	{
+		this->to_improper();
+		other.to_improper();
+		return
+			this->get_numerator() == other.get_numerator() &&
+			this->get_denominator() == other.get_denominator();
+	}
+	bool operator!=(Fraction& other)
+	{
+		return !(*this == other);
+	}
+	bool operator>(Fraction& other)
+	{
+		return (Fraction(*this - other).get_denominator() > 0); //Нагло пользуемся спецификой собственного кода
+	}
+	bool operator<(Fraction& other)
+	{
+		return (Fraction(*this - other).get_denominator() < 0);
+	}
+	bool operator>=(Fraction& other)
+	{
+		return (*this > other) || (*this == other);	//зная как работает программа, он сначала проверит левую часть выражения и если та будет истиной, то он даже не приступит к правой (справа от ||)
+													//а значит мы никак не влияем на скорость выполнения программы.
+	}												//а еще мы не дублируем код, а значит следуем принципам ООП
+	bool operator<=(Fraction& other)
+	{
+		return (*this < other) || (*this == other);
+																					
+	}
+
 	//Methods
-		Fraction& to_improper()//Переводит дробь в неправильну
+	Fraction& to_improper()//Переводит дробь в неправильну
 	{
 		numerator += integer * denominator;
 		integer = 0;
-		return *this;
+		return *this;	
 	}
 	Fraction& to_proper()//Переводит дробь в правильную
 	{
@@ -160,6 +206,28 @@ Fraction operator*(Fraction left, Fraction right)
 		left.get_denominator() * right.get_denominator()
 	).to_proper().reduce();
 }
+Fraction operator+(Fraction left, Fraction right)
+{
+	left.to_improper();	right.to_improper();
+	return Fraction	//Явно вызываем конструктор, который создает временный безымянный объект
+	(
+		(left.get_numerator() * right.get_denominator()) + 
+		(left.get_denominator() * right.get_numerator()),
+		left.get_denominator() * right.get_denominator()
+	).to_proper().reduce();
+}
+
+Fraction operator-(Fraction left, Fraction right)
+{
+	left.to_improper();	right.to_improper();
+	return Fraction	//Явно вызываем конструктор, который создает временный безымянный объект
+	(
+		(left.get_numerator() * right.get_denominator()) -
+		(left.get_denominator() * right.get_numerator()),
+		left.get_denominator() * right.get_denominator()
+	).to_proper().reduce();
+}
+
 Fraction operator/(Fraction left, Fraction right)
 {
 	return left * right.inverted();
@@ -185,10 +253,10 @@ void main()
 	D.print();
 #endif  CONSTRUCTORS_CHECK
 
-	double a = 2.5;
-	double b = 3.4;
-	double c = a * b;
-	cout <<  c << endl;
+	Fraction C(0, 7, 8);
+	Fraction D(0, 6, 9);
+	Fraction E = C + D;
+	E.print();
 
 	Fraction A(2, 1, 2);
 	Fraction B(3, 2, 5);
@@ -201,9 +269,20 @@ void main()
 
 	/*C = A  B;
 	C.print();*/
-
 	A = B;
 	A.operator*=(B);
 	A.print();
-	A = A * B;
+	A = A /= B;
+	A.print();
+	E -= A;
+	E.print();
+
+	Fraction F(0, 1, 4);
+	Fraction G(0, 1, 2); //Изменяем тут что-нибудь одно и проверяем
+	F==G? cout << "\nF == G\n" : cout << "\nF != G\n";
+	F!=G? cout << "\nF != G\n" : cout << "\nF == G\n"; //При проверке должен быть одинаковый текст на выходе.
+
+	F <= G? cout << "\nF < G\n" : cout << "\nF > G\n";
+	F > G? cout << "\nF > G\n" : cout << "\nF < G\n"; //При проверке должен быть одинаковый текст на выходе.
+	
 }	
