@@ -30,55 +30,55 @@ public:
 	}
 	void set_integer(int integer)
 	{
-		this -> integer = integer;
+		this->integer = integer;
 	}
 	void set_numerator(int numerator)
 	{
-		this -> numerator = numerator;
+		this->numerator = numerator;
 	}
 	void set_denominator(int denominator)
 	{
 		if (denominator == 0)denominator = 1;	//Отфильтровываем 0
-			this -> denominator = denominator;
+		this->denominator = denominator;
 	}
 	//Constructors
 	Fraction()
 	{
-		this -> integer = 0;
-		this -> numerator = 0;
-		this -> denominator = 1;
-		cout <<  "DefaultConstruct:\t" << this << endl;
+		this->integer = 0;
+		this->numerator = 0;
+		this->denominator = 1;
+		cout << "DefaultConstruct:\t" << this << endl;
 	}
 	Fraction(int integer)
 	{
-		this -> integer = integer;
-		this -> numerator = 0;
-		this -> denominator = 1;
-		cout <<  "1argConstructor:\t" << this << endl;
+		this->integer = integer;
+		this->numerator = 0;
+		this->denominator = 1;
+		cout << "1argConstructor:\t" << this << endl;
 	}
 	Fraction(int numerator, int denominator)
 	{
-		this -> integer = 0;
-		this -> numerator = numerator;
+		this->integer = 0;
+		this->numerator = numerator;
 		set_denominator(denominator);	//Чтобы не обойти фильтрацию данных
-			cout <<  "Constructor:\t" << this << endl;
+		cout << "Constructor:\t" << this << endl;
 	}
 	Fraction(int integer, int numerator, int denominator)
 	{
-		this -> integer = integer;
-		this -> numerator = numerator;
+		this->integer = integer;
+		this->numerator = numerator;
 		set_denominator(denominator);
-		cout <<  "Constructor:\t" << this << endl;
+		cout << "Constructor:\t" << this << endl;
 	}
 	~Fraction()
 	{
-		cout <<  "Destructor:\t" << this << endl;
+		cout << "Destructor:\t" << this << endl;
 	}
 
 	//Operators
 	Fraction& operator*=(const Fraction& other)
 	{
-		return *this = *this*other;
+		return *this = *this * other;
 		//A = A * B
 	}
 
@@ -122,7 +122,7 @@ public:
 	bool operator<=(Fraction& other)
 	{
 		return (*this < other) || (*this == other);
-																					
+
 	}
 
 	//Methods
@@ -130,7 +130,7 @@ public:
 	{
 		numerator += integer * denominator;
 		integer = 0;
-		return *this;	
+		return *this;
 	}
 	Fraction& to_proper()//Переводит дробь в правильную
 	{
@@ -170,20 +170,20 @@ public:
 	Fraction inverted()
 	{
 		to_improper();
-		return Fraction(this -> denominator, this -> numerator);
+		return Fraction(this->denominator, this->numerator);
 	}
 	void print()const
 	{
-		if (integer)cout <<  integer; //Если есть целая часть, выводим ее на экран
-			if (numerator)
-			{
-				if (integer)cout << "(";
-				cout <<  numerator << "/" << denominator;
-				if (integer)cout <<")";
-			}
-			else if (integer == 0)
-				cout <<  0;
-		cout <<  endl;
+		if (integer)cout << integer; //Если есть целая часть, выводим ее на экран
+		if (numerator)
+		{
+			if (integer)cout << "(";
+			cout << numerator << "/" << denominator;
+			if (integer)cout << ")";
+		}
+		else if (integer == 0)
+			cout << 0;
+		cout << endl;
 	}
 };
 
@@ -211,7 +211,7 @@ Fraction operator+(Fraction left, Fraction right)
 	left.to_improper();	right.to_improper();
 	return Fraction	//Явно вызываем конструктор, который создает временный безымянный объект
 	(
-		(left.get_numerator() * right.get_denominator()) + 
+		(left.get_numerator() * right.get_denominator()) +
 		(left.get_denominator() * right.get_numerator()),
 		left.get_denominator() * right.get_denominator()
 	).to_proper().reduce();
@@ -279,10 +279,10 @@ void main()
 
 	Fraction F(0, 1, 4);
 	Fraction G(0, 1, 2); //Изменяем тут что-нибудь одно и проверяем
-	F==G? cout << "\nF == G\n" : cout << "\nF != G\n";
-	F!=G? cout << "\nF != G\n" : cout << "\nF == G\n"; //При проверке должен быть одинаковый текст на выходе.
+	F == G ? cout << "\nF == G\n" : cout << "\nF != G\n";
+	F != G ? cout << "\nF != G\n" : cout << "\nF == G\n"; //При проверке должен быть одинаковый текст на выходе.
 
-	F <= G? cout << "\nF < G\n" : cout << "\nF > G\n";
-	F > G? cout << "\nF > G\n" : cout << "\nF < G\n"; //При проверке должен быть одинаковый текст на выходе.
-	
-}	
+	F <= G ? cout << "\nF < G\n" : cout << "\nF > G\n";
+	F > G ? cout << "\nF > G\n" : cout << "\nF < G\n"; //При проверке должен быть одинаковый текст на выходе.
+
+}
