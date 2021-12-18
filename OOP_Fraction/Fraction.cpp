@@ -124,6 +124,24 @@ public:
 		return (*this < other) || (*this == other);
 
 	}
+	//Type-cast OPERATORS
+	explicit operator double()
+	{
+		return integer + (double)numerator / denominator;
+	}
+	explicit operator int()
+	{
+		return integer;
+	}
+	Fraction(double decimal)
+	{
+		decimal += 1e-10;
+		integer = decimal;
+		denominator = 1e+9;
+		decimal -= integer;
+		numerator = decimal * denominator;
+		reduce();
+	}
 
 	//Methods
 	Fraction& to_improper()//ѕереводит дробь в неправильну
@@ -172,7 +190,7 @@ public:
 		to_improper();
 		return Fraction(this->denominator, this->numerator);
 	}
-	void print()const
+	void print()const //не буду избавл€тьс€ от этого метода, а просто перегружу его, чтобы не переписывать код из  неактивных препроцессорных блоков
 	{
 		if (integer)cout << integer; //≈сли есть цела€ часть, выводим ее на экран
 		if (numerator)
@@ -184,6 +202,20 @@ public:
 		else if (integer == 0)
 			cout << 0;
 		cout << endl;
+	}
+	std::ostream& print(std::ostream& os)const //не буду избавл€тьс€ от этого метода, а просто перегружу его, чтобы не переписывать код из  неактивных препроцессорных блоков
+	{
+		if (integer)os << integer; //≈сли есть цела€ часть, выводим ее на экран
+		if (numerator)
+		{
+			if (integer)os << "(";
+			os << numerator << "/" << denominator;
+			if (integer)os << ")";
+		}
+		else if (integer == 0)
+			os << 0;
+		os << endl;
+		return os;
 	}
 };
 
@@ -233,9 +265,62 @@ Fraction operator/(Fraction left, Fraction right)
 	return left * right.inverted();
 }
 
-//#define CONSTRUCTORS_CHECK
+std::ostream& operator<<(std::ostream& os, const Fraction& obj)
+{
+	return obj.print(os);
+}
 
-void main()
+std::istream& operator>>(std::istream& is, Fraction& obj)
+{
+	/*int integer;
+	int numerator;
+	int denominator;
+	is >> integer >> numerator >> denominator;
+	obj.set_integer(integer);
+	obj.set_numerator(numerator);
+	obj.set_denominator(denominator);*/
+	const int SIZE = 256;
+	char buffer[SIZE] = {};
+	char delimeters[] = "() /";
+	is.getline(buffer, SIZE);
+	char* number[3] = {};
+	int n = 0;
+
+	char* pch = strtok(buffer, delimeters);
+	while (pch)
+	{
+		number[n++] = pch;
+		pch = strtok(NULL, delimeters);
+	}
+//#define INPUT_CHECK
+#ifdef INPUT_CHECK 
+	for (int i = 0; i < n; i++)
+	{
+		cout << number[i] << '\t';
+	}
+	cout << '\n';
+#endif INPUT_CHECK
+	switch (n)
+	{
+	case 1: obj.set_integer(atoi(number[0]));
+		break;
+	case 2:
+		obj.set_numerator(atoi(number[0]));
+		obj.set_denominator(atoi(number[1]));
+		break;
+	case 3:
+		obj.set_integer(atoi(number[0]));
+		obj.set_numerator(atoi(number[1]));
+		obj.set_denominator(atoi(number[2]));
+	}
+	return is;
+}
+
+//#define CONSTRUCTORS_CHECK
+//#define SOMETHING
+//#define TYPE_CAST
+
+int main()
 {
 #ifdef CONSTRUCTORS_CHECK
 	Fraction A;	Default constructor
@@ -252,7 +337,7 @@ void main()
 	Fraction D(2, 3, 4);
 	D.print();
 #endif  CONSTRUCTORS_CHECK
-
+#ifdef SOMETHING
 	Fraction C(0, 7, 8);
 	Fraction D(0, 6, 9);
 	Fraction E = C + D;
@@ -284,5 +369,20 @@ void main()
 
 	F <= G ? cout << "\nF < G\n" : cout << "\nF > G\n";
 	F > G ? cout << "\nF > G\n" : cout << "\nF < G\n"; //ѕри проверке должен быть одинаковый текст на выходе.
+#endif  SOMETHING
+#ifdef TYPE_CAST
+	Fraction A(2, 3, 4);
+	double a = (double)A;
+	cout << a << endl;
 
+	double b = 2.75;
+	Fraction B = b;
+	B.print();
+#endif TYPE_CAST
+	Fraction A;
+	cout << "Input your fraction: ";
+	cin >> A;
+	cout << A << endl;
+
+	return 0;
 }
